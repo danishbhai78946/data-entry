@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satya Finance Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .login-box {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .login-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .login-title {
+            color: var(--dark);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .login-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .error-message {
+            color: var(--danger);
+            background-color: rgba(239, 68, 68, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .contact-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-container {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--light);
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .date-time {
+            text-align: right;
+            font-size: 1rem;
+        }
+
+        .date-time div:first-child {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: var(--dark);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .balance {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .balance-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-deposit {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--secondary);
+        }
+
+        .btn-deposit:hover {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-withdraw {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .btn-withdraw:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-assignment {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .btn-assignment:hover {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .data-entry-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .submit-btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .contact-details {
+            line-height: 1.8;
+            color: var(--dark);
+        }
+
+        .contact-details div {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .contact-details i {
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .logout-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .recent-activity {
+            list-style-type: none;
+        }
+
+        .recent-activity li {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .recent-activity li:last-child {
+            border-bottom: none;
+        }
+
+        .activity-desc {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .activity-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .date-time {
+                text-align: center;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .login-box {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="container login-container" id="loginPage">
+        <div class="login-box">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1 class="login-title">Welcome to Finance Dashboard</h1>
+            
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter your username">
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Enter your password">
+                    <button class="password-toggle" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button class="login-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            
+            <div class="error-message" id="errorMessage">
+                Invalid username or password. Please try again.
+            </div>
+            
+            <div class="contact-info">
+                <p><i class="fas fa-phone-alt"></i> Contact: 7377504157</p>
+                <p><i class="fas fa-envelope"></i> Email: microsoftcompany761@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="container dashboard-container" id="dashboardPage">
+        <div class="dashboard-header">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div class="user-name">Satya Anada Prayag</div>
+                    <div>Finance Dashboard</div>
+                </div>
+            </div>
+            
+            <div class="date-time">
+                <div id="currentDateTime">Loading...</div>
+                <div id="currentDate">Loading...</div>
+            </div>
+            
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        
+        <div class="dashboard-content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-wallet"></i> Account Overview</h2>
+                <div class="balance" id="availableBalance">₹ 48,750.00</div>
+                <div class="balance-label">Available Balance</div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-deposit" id="depositBtn">
+                        <i class="fas fa-plus-circle"></i> Deposit
+                    </button>
+                    <button class="btn btn-withdraw" id="withdrawBtn">
+                        <i class="fas fa-minus-circle"></i> Withdraw
+                    </button>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-assignment" id="assignmentBtn">
+                        <i class="fas fa-tasks"></i> Assignment
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-edit"></i> Data Entry</h2>
+                <form class="data-entry-form" id="dataEntryForm">
+                    <div class="form-group">
+                        <label for="entryType">Entry Type</label>
+                        <select id="entryType">
+                            <option value="deposit">Deposit</option>
+                            <option value="withdrawal">Withdrawal</option>
+                            <option value="transfer">Transfer</option>
+                            <option value="payment">Payment</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="amount">Amount (₹)</label>
+                        <input type="number" id="amount" placeholder="Enter amount">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" rows="3" placeholder="Enter description"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-save"></i> Save Entry
+                    </button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-history"></i> Recent Activity</h2>
+                <ul class="recent-activity" id="recentActivity">
+                    <li>
+                        <span class="activity-desc">Deposit from Bank Transfer</span>
+                        <span class="activity-date">Today, 10:30 AM</span>
+                    </li>
+                    <li>
+                        <span class="activity-desc">Withdrawal to Account XXX-7890</span>
+                        <span class="activity-date">Yesterday, 3:45 PM</span>
+                    </li>
+                    <li>
+                        <span class="activity-desc">Assignment Completed: Monthly Report</span>
+                        <span class="activity-date">Apr 12, 2024</span>
+                    </li>
+                    <li>
+                        <span class="activity-desc">Deposit from Client Payment</span>
+                        <span class="activity-date">Apr 10, 2024</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-address-book"></i> Contact Details</h2>
+                <div class="contact-details">
+                    <div>
+                        <i class="fas fa-user"></i>
+                        <span>Satya Anada Prayag</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-phone-alt"></i>
+                        <span>7377504157</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-envelope"></i>
+                        <span>microsoftcompany761@gmail.com</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Prayagraj, Uttar Pradesh, India</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-briefcase"></i>
+                        <span>Finance Manager</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 Satya Finance Dashboard. All rights reserved.</p>
+            <p>Designed with <i class="fas fa-heart" style="color:#ef4444;"></i> for secure financial management</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginPage = document.getElementById('loginPage');
+        const dashboardPage = document.getElementById('dashboardPage');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const togglePassword = document.getElementById('togglePassword');
+        const errorMessage = document.getElementById('errorMessage');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const currentDateTime = document.getElementById('currentDateTime');
+        const currentDate = document.getElementById('currentDate');
+        const depositBtn = document.getElementById('depositBtn');
+        const withdrawBtn = document.getElementById('withdrawBtn');
+        const assignmentBtn = document.getElementById('assignmentBtn');
+        const dataEntryForm = document.getElementById('dataEntryForm');
+        const availableBalance = document.getElementById('availableBalance');
+        const recentActivity = document.getElementById('recentActivity');
+        
+        // Credentials (in a real app, these would be validated server-side)
+        const validUsername = "satya321";
+        const validPassword = "satya321@#";
+        
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+        
+        // Login function
+        loginBtn.addEventListener('click', function() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (username === validUsername && password === validPassword) {
+                // Successful login
+                loginPage.style.display = 'none';
+                dashboardPage.style.display = 'block';
+                errorMessage.style.display = 'none';
+                
+                // Reset form
+                usernameInput.value = '';
+                passwordInput.value = '';
+                
+                // Update balance with animation
+                animateBalanceUpdate(48750);
+            } else {
+                // Failed login
+                errorMessage.style.display = 'block';
+                passwordInput.value = '';
+                
+                // Shake animation for error
+                loginBox.classList.add('shake');
+                setTimeout(() => {
+                    loginBox.classList.remove('shake');
+                }, 500);
+            }
+        });
+        
+        // Logout function
+        logoutBtn.addEventListener('click', function() {
+            dashboardPage.style.display = 'none';
+            loginPage.style.display = 'flex';
+        });
+        
+        // Update real-time date and time
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Format time
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true 
+            };
+            const timeString = now.toLocaleTimeString('en-US', timeOptions);
+            
+            // Format date
+            const dateOptions = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const dateString = now.toLocaleDateString('en-US', dateOptions);
+            
+            currentDateTime.textContent = timeString;
+            currentDate.textContent = dateString;
+        }
+        
+        // Update datetime every second
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Initial call
+        
+        // Button click handlers
+        depositBtn.addEventListener('click', function() {
+            alert("Deposit feature would open here. In a real application, this would connect to a payment gateway.");
+            
+            // Simulate adding a recent activity
+            addRecentActivity("Deposit initiated via dashboard", "Just now");
+        });
+        
+        withdrawBtn.addEventListener('click', function() {
+            alert("Withdrawal feature would open here. In a real application, this would connect to your bank.");
+            
+            // Simulate adding a recent activity
+            addRecentActivity("Withdrawal request submitted", "Just now");
+        });
+        
+        assignmentBtn.addEventListener('click', function() {
+            alert("Assignment dashboard would open here. This would show your current tasks and assignments.");
+            
+            // Simulate adding a recent activity
+            addRecentActivity("Assignment dashboard accessed", "Just now");
+        });
+        
+        // Data entry form submission
+        dataEntryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const entryType = document.getElementById('entryType').value;
+            const amount = document.getElementById('amount').value;
+            const description = document.getElementById('description').value;
+            
+            if (!amount || amount <= 0) {
+                alert("Please enter a valid amount");
+                return;
+            }
+            
+            // Update balance based on entry type
+            const currentBalance = parseFloat(availableBalance.textContent.replace(/[^0-9.-]+/g, ""));
+            const amountNum = parseFloat(amount);
+            
+            let newBalance;
+            if (entryType === 'deposit') {
+                newBalance = currentBalance + amountNum;
+            } else {
+                newBalance = currentBalance - amountNum;
+            }
+            
+            // Animate balance update
+            animateBalanceUpdate(newBalance);
+            
+            // Add to recent activity
+            const activityText = `${entryType.charAt(0).toUpperCase() + entryType.slice(1)}: ${description || "No description"}`;
+            addRecentActivity(activityText, "Just now");
+            
+            // Show success message
+            alert(`Data entry saved successfully!\nType: ${entryType}\nAmount: ₹${amount}\nDescription: ${description || "N/A"}`);
+            
+            // Reset form
+            this.reset();
+        });
+        
+        // Animate balance update
+        function animateBalanceUpdate(newBalance) {
+            const currentBalance = parseFloat(availableBalance.textContent.replace(/[^0-9.-]+/g, ""));
+            const difference = newBalance - currentBalance;
+            const steps = 20;
+            const stepValue = difference / steps;
+            let currentStep = 0;
+            
+            const interval = setInterval(() => {
+                if (currentStep >= steps) {
+                    clearInterval(interval);
+                    availableBalance.textContent = `₹ ${newBalance.toFixed(2).toLocaleString()}`;
+                    return;
+                }
+                
+                const displayValue = currentBalance + (stepValue * currentStep);
+                availableBalance.textContent = `₹ ${displayValue.toFixed(2).toLocaleString()}`;
+                currentStep++;
+                
+                // Add color effect based on whether it's increasing or decreasing
+                if (difference > 0) {
+                    availableBalance.style.color = "#10b981";
+                } else if (difference < 0) {
+                    availableBalance.style.color = "#ef4444";
+                }
+            }, 30);
+            
+            // Reset color after animation
+            setTimeout(() => {
+                availableBalance.style.color = "#4f46e5";
+            }, 1000);
+        }
+        
+        // Add recent activity
+        function addRecentActivity(description, time) {
+            const activityItem = document.createElement('li');
+            activityItem.innerHTML = `
+                <span class="activity-desc">${description}</span>
+                <span class="activity-date">${time}</span>
+            `;
+            
+            recentActivity.prepend(activityItem);
+            
+            // Limit to 6 items
+            if (recentActivity.children.length > 6) {
+                recentActivity.removeChild(recentActivity.lastChild);
+            }
+        }
+        
+        // Add CSS for shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% {transform: translateX(0);}
+                10%, 30%, 50%, 70%, 90% {transform: translateX(-5px);}
+                20%, 40%, 60%, 80% {transform: translateX(5px);}
+            }
+            .shake {
+                animation: shake 0.5s ease-in-out;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Allow login with Enter key
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
